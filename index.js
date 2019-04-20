@@ -38,7 +38,7 @@ app.get('/detail',(req,res)=>{
     const id = req.query.id
     deHelper.find('cqlist',{_id: deHelper.ObjectId(id)},results=>{
         // 返回查询的数据
-        res.send(results)
+        res.send(results[0])
     })
 })
 //英雄添加路由

@@ -82,7 +82,7 @@
               </ol>
             </div>
             <div class="panel-body">
-              <form action="#" method="" class="form-horizontal">
+              <form action="#" method="" class="form-horizontal form">
                 <div class="form-group">
                   <label for="heroName" class="col-sm-2 control-label"
                     >姓名</label
@@ -106,7 +106,7 @@
                       type="text"
                       class="form-control"
                       id="skill"
-                      name="skill"
+                      name="skillName"
                       placeholder="请输入技能"
                     />
                   </div>
@@ -118,14 +118,14 @@
                       required
                       type="file"
                       class="form-control"
-                      id="icon"
-                      name="icon"
+                      id="heroIcon"
+                      name="heroIcon"
                     />
                   </div>
                 </div>
                 <div class="form-group">
                   <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-default">保存</button>
+                    <button type="submit" class="btn btn-default btn-save">保存</button>
                     <button type="submit" class="btn btn-cancel">取消</button>
                   </div>
                 </div>
@@ -147,7 +147,37 @@
    $(() => {
      //接受传过来的id
      const id = location.search.split('=')[1];   
-     console.log(id);
-     $
+    //将原数据渲染到表单内
+     $.ajax({
+       url:'/detail',
+       data:{id},
+       dataType:'json',
+       success(backdata){
+         $('#heroName').val(backdata.heroName);
+         $("#skill").val(backdata.skillName);
+       }
+     })
+//修改数据请求
+     $('.btn-save').on('click',(e) => {
+       e.preventDefault();
+       const data = new FormData($('form')[0]);
+       data.append('id',id);
+       $.ajax({
+         type:'post',
+         url:'/heroUpdate',
+         data,
+         contentType:false,
+         processData:false,
+         dataType:'json',
+         success(backdata){
+           if(backdata.code == 200){
+             alert("修改成功");
+             setTimeout(()=>{
+                 location.href="./index.html";
+             },1000)
+           }
+         }
+       })
+     })
    })
 </script>
