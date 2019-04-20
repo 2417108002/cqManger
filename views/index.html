@@ -176,7 +176,7 @@
       <td data-id="{{$value._id}}">
         <button onclick="" class="btn btn-success btn-edit">编辑🍞</button>
 
-        <button onclick="" class="btn btn-danger">删除👍</button>
+        <button onclick="" class="btn btn-danger btn-delete">删除👍</button>
       </td>
     </tr>
     {{/each}}
@@ -205,25 +205,48 @@
        })
      }
      data();
+     //上一页
      $('.pre').on('click',()=>{
        pageNum--;
        data();
      })
+     //下一页
      $('.next').on('click',()=>{
        pageNum++;
        data();
      })
+     //点击搜索发送情求
    $('.btn-search').on('click',(e)=>{
      e.preventDefault();
      data();
    })
+   //回车发送请求
    $('input[name=search]').keyup((e)=>{
      if(e.keyCode == 13){
        data();
      }
    })
+   //修改按钮点击事件
    $('tbody').on('click','.btn-edit',function(){
      const id = $(this).parent().data('id');
     location.href = "edit.html?id="+id;
+   })
+   //删除按钮点击事件
+   $('tbody').on('click','.btn-delete',function(){
+     const id = $(this).parent().data('id');
+     if(confirm("确认要删除吗")){
+      $.ajax({
+       url:'/heroDelete',
+       data:{id},
+       dataType:'json',
+       success(backdata){
+         if(backdata.code == 200){
+            data();
+         }
+        }
+      })
+    
+    }
+     
    })
 </script>
