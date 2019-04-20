@@ -111,20 +111,20 @@
                         />
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-success">查找</button>
+                    <button type="submit" class="btn btn-success btn-search">查找</button>
                     <a href="#" class="btn btn-warning">新增</a>
                   </form>
                 </div>
                 <div class="col-md-3">
                   <ul class="pagination  pull-right" style="margin:0">
                     <li>
-                      <a href="#" aria-label="Previous">
+                      <a href="#" aria-label="Previous" class="pre">
                         <span aria-hidden="true">«</span>
                       </a>
                     </li>
                     <li class="page-num"><a href="#">1/1</a></li>
                     <li>
-                      <a href="#" aria-label="Next">
+                      <a href="#" aria-label="Next" class="next">
                         <span aria-hidden="true">»</span>
                       </a>
                     </li>
@@ -166,3 +166,60 @@
 <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="./lib/js/template-web.js"></script>
+<script type="text/html" id="listTpl">
+  {{each list}}
+  <tr>
+      <td>{{$value.heroName}}</td>
+      <td>{{$value.skillName}}</td>
+      <td><img src="{{$value.heroIcon}}" alt="" /></td>
+      <td data-id="{{$value.id}}">
+        <button onclick="" class="btn btn-success">编辑🍞</button>
+
+        <button onclick="" class="btn btn-danger">删除👍</button>
+      </td>
+    </tr>
+    {{/each}}
+</script>
+<script>
+  let pageNum = 1;
+ 
+     function data(){
+       let pageSize = 10;
+       let query = $("input[name=search]").val();
+       $.ajax({
+         url:'/list',
+         data:{
+           pageNum,
+           pageSize,
+           query
+         },
+         dataType:'json',
+         success(backdata){
+           console.log(backdata);
+           
+           let html = template('listTpl',backdata);
+          $('tbody').html(html);
+          $('.page-num a').text(`${pageNum}/${backdata.pageAllnum}`)
+         }
+       })
+     }
+     data();
+     $('.pre').on('click',()=>{
+       pageNum--;
+       data();
+     })
+     $('.next').on('click',()=>{
+       pageNum++;
+       data();
+     })
+   $('.btn-search').on('click',(e)=>{
+     e.preventDefault();
+     data();
+   })
+   $('input[name=search]').keyup((e)=>{
+     if(e.keyCode == 13){
+       data();
+     }
+   })
+</script>
