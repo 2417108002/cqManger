@@ -58,9 +58,18 @@ app.post('/heroAdd',upload.single('heroIcon'),(req,res)=>{
 app.post('/heroUpdate',upload.single('heroIcon'),(req,res)=>{
     const heroName = req.body.heroName
     const skillName = req.body.skillName
-    const heroIcon = path.join('imgs',req.file.filename)
+    let update = {
+        heroName,
+        skillName,
+    }
     const id = req.body.id
-    deHelper.updateOne('cqlist',{_id: deHelper.ObjectId(id) },{heroName,heroIcon,skillName},results=>{
+    console.log(req.file);
+    
+    if(req.file){
+        const heroIcon = path.join('imgs',req.file.filename)
+        update.heroIcon = heroIcon
+    }
+    deHelper.updateOne('cqlist',{_id: deHelper.ObjectId(id) },update,results=>{
         res.send({
             msg:"修改成功",
             code:200
