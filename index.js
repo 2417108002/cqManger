@@ -4,6 +4,7 @@ const multer = require('multer')
 const path = require('path')
 const bodyParser = require('body-parser')
 const cookieSession = require('cookie-session')
+const svgCaptcha = require('svg-captcha');
 const app = express()
 var upload = multer({ dest: 'views/imgs/' })
 app.use(express.static("views"))
@@ -15,18 +16,18 @@ app.use(cookieSession({
   keys: ['key1', 'key2'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
- app.use((req,res,next) => {
-        if(req.url.indexOf("/hero") === 0){
-              if(req.session.userName){
-                    next()
-              }else{
-                  res.send({
-                      msg:"请先登录",
-                      code:400
-                  })
-              }
-        }
- })
+//  app.use((req,res,next) => {
+//         if(req.url.indexOf("/hero") === 0){
+//               if(req.session.userName){
+//                     next()
+//               }else{
+//                   res.send({
+//                       msg:"请先登录",
+//                       code:400
+//                   })
+//               }
+//         }
+//  })
 //查询路由
 app.get('/list',(req,res)=>{
     const pageNum = req.query.pageNum
@@ -127,7 +128,7 @@ app.post('/register',(req,res)=>{
     })
 })
 //路由7 验证码模块
-var svgCaptcha = require('svg-captcha');
+
 app.get('/captcha', function (req, res) {
 	var captcha = svgCaptcha.create();
 	req.session.vcode = captcha.text;
@@ -138,11 +139,11 @@ app.get('/captcha', function (req, res) {
 //路由8 登录接口
 app.post('/login',(req,res)=>{
     const userName = req.body.userName
-    const password = req.body.password
+    const userPass = req.body.userPass
     const vcode = req.body.vcode
     if(req.session.vcode.toLowerCase() === vcode.toLowerCase()){
-        deHelper.find('user',{userName},results=>{
-            if(results.length > 0){
+        deHelper.find('user',{userName,userPass},results=>{
+            if(results.length != 0){
                 req.session.userName = userName
                 res.send({
                     msg:"恭喜您,登录成功,欢赢回来",

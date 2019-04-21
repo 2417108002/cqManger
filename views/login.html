@@ -52,7 +52,7 @@
               <div class="form-group">
                 <label for="vCode" class="col-sm-2 control-label">验证码</label>
                 <div class="col-sm-6">
-                  <input type="text" name="vCode" class="form-control" id="vCode" placeholder="请输入验证码">
+                  <input type="text" name="vcode" class="form-control" id="vCode" placeholder="请输入验证码">
                 </div>
                 <div class="col-sm-4">
                   <img class='vCode' src="/captcha" alt="">
@@ -78,10 +78,28 @@
 <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="./lib/md5/md5.min.js"></script>
 <script>
 $(()=>{
   $(".vCode").on('click',function(){
     $(this).attr('src',`/captcha?${new Date()}`);
+  })
+  $(".login").on('click',function(e){
+    e.preventDefault();
+    const password = md5($('#userPass').val(),"hello");
+    $('#userPass').val(password)
+       $.ajax({
+         type:"post",
+         url:"/login",
+         data:$('form').serialize(),
+         success(backdata){
+           console.log(backdata);
+           if(backdata.code==200){
+             location.href = "index.html?userName="+backdata.userName;
+           }
+
+         }
+       })
   })
 })
 </script>
