@@ -9,27 +9,52 @@ const app = express()
 var upload = multer({ dest: 'views/imgs/' })
 app.use(express.static("views"))
 app.use(bodyParser.urlencoded({ extended: false }))
-app.set('trust proxy', 1) // trust first proxy
- 
 app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2'],
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
-//  app.use((req,res,next) => {
-//         if(req.url.indexOf("/hero") === 0){
-//               if(req.session.userName){
-//                     next()
-//               }else{
-//                   res.send({
-//                       msg:"请先登录",
-//                       code:400
-//                   })
-//               }
-//         }
-//  })
+ app.use((req,res,next) => {
+        if(req.url.indexOf('/hero') === 0){
+            console.log(req.session.userName);
+            
+              if(req.session.userName){
+                    next()
+              }else{
+                  res.send({
+                      msg:"请先登录",
+                      code:400
+                  })
+              }
+        }else{
+            next()
+        }
+ })
+// app.use((req, res, next) => {
+//     // console.log(req.url.indexOf('/hero'))
+//     console.log(req.url);
+    
+//     if(req.url.indexOf('/hero')===0){
+//       // 必须要登录才可以使用
+//       // 登陆的依据
+//       // console.log(req.session.username)
+//       if(req.session.username){
+//         // 已登录 可以继续使用
+//         next()
+//       }else{
+//         // 未登录
+//         // 不在往后执行 直接响应内容给用户 作为提示
+//         res.send({
+//           msg:'请先登录',
+//           code:400
+//         })
+//       }
+//     }else{
+//     //   next()
+//     }
+// })  
 //查询路由
-app.get('/list',(req,res)=>{
+app.get('/herolist',(req,res)=>{
     const pageNum = req.query.pageNum
     const pageSize = req.query.pageSize
     const query = req.query.query
@@ -58,7 +83,7 @@ app.get('/list',(req,res)=>{
     })
 })
 //详情路由
-app.get('/detail',(req,res)=>{
+app.get('/herodetail',(req,res)=>{
     const id = req.query.id
     deHelper.find('cqlist',{_id: deHelper.ObjectId(id)},results=>{
         // 返回查询的数据

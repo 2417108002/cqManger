@@ -71,7 +71,7 @@
                 id="bs-example-navbar-collapse-1"
               >
                 <p class="navbar-text navbar-right " style="font-weight: 700">
-                  欢迎 【jack】登录
+                  欢迎  【<span class="userName">jack</span>】 登录
                   <a href="#" class="logout">退出</a>
                 </p>
               </div>
@@ -188,7 +188,7 @@
        let pageSize = 10;
        let query = $("input[name=search]").val();
        $.ajax({
-         url:'/list',
+         url:'/herolist',
          data:{
            pageNum,
            pageSize,
@@ -197,7 +197,10 @@
          dataType:'json',
          success(backdata){
            console.log(backdata);
-           
+           if (backdata.code === 400) {
+            alert('请先登录')
+            window.location.href = './login.html'
+          }
            let html = template('listTpl',backdata);
           $('tbody').html(html);
           $('.page-num a').text(`${pageNum}/${backdata.pageAllnum}`)
@@ -253,5 +256,22 @@
     
     }
      
+   })
+
+   //用户名渲染
+
+   $('.userName').text(location.search.split('=')[1]);
+
+   //退出登录
+   $('.logout').on('click',function(){
+     $.ajax({
+       url:"logout",
+       success(backdata){
+         if(backdata.code==200){
+           alert(backdata.msg);
+           location.href="login.html";
+         }
+       }
+     })
    })
 </script>
