@@ -67,8 +67,8 @@
 
                 <div class="form-group">
                   <div class="col-sm-offset-2 col-sm-4">
-                    <button type="button" class="btn btn-success login">
-                      登陆
+                    <button type="button" class="btn btn-success register">
+                      注册
                     </button>
                     <a href="./login.html" class="btn btn-danger">返回</a>
                   </div>
@@ -85,3 +85,23 @@
 <script src="./lib/bootstrap/js/jquery-1.12.4.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
+<script src="./lib/md5/md5.min.js"></script>
+<script>
+     $(() => {
+         $('.register').on('click',() => {
+         //const reg = /^[a-z0-9]+$/i;
+
+          const password = md5($('#userPass').val(),"hello");
+          $('#userPass').val(password)
+           $.ajax({
+             type:'post',
+             url:'/register',
+             data: $('form').serialize(),
+             success(backdata){
+               console.log(backdata);
+               
+             }
+           })
+         })
+     })
+</script>

@@ -115,9 +115,10 @@
                     <input
                       type="file"
                       class="form-control"
-                      id="icon"
+                      id="heroIcon"
                       name="heroIcon"
                     />
+                    <img src="" class="fileImg" alt="">
                   </div>
                 </div>
                 <div class="form-group">
@@ -141,6 +142,10 @@
 <script src="./lib/bootstrap/js/bootstrap.min.js"></script>
 <script>
     $(function(){
+      $('#heroIcon').on('change',function(e){
+       const url = URL.createObjectURL(e.target.files[0]);
+       $(".fileImg").attr('src',url);
+     })
          $('.btn-add').on('click',(e) => {
            e.preventDefault();
            const data = new FormData($('.form')[0]);

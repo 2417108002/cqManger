@@ -2,9 +2,31 @@ const express = require('express')
 const deHelper = require('./dbHelper')
 const multer = require('multer')
 const path = require('path')
+const bodyParser = require('body-parser')
+const cookieSession = require('cookie-session')
 const app = express()
 var upload = multer({ dest: 'views/imgs/' })
 app.use(express.static("views"))
+app.use(bodyParser.urlencoded({ extended: false }))
+app.set('trust proxy', 1) // trust first proxy
+ 
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2'],
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+ app.use((req,res,next) => {
+        if(req.url.indexOf("/hero") === 0){
+              if(req.session.userName){
+                    next()
+              }else{
+                  res.send({
+                      msg:"请先登录",
+                      code:400
+                  })
+              }
+        }
+ })
 //查询路由
 app.get('/list',(req,res)=>{
     const pageNum = req.query.pageNum
@@ -84,6 +106,70 @@ app.get('/heroDelete',(req,res)=>{
             msg:"删除成功",
             code:200
         })
+    })
+})
+//路由6 用户注册
+app.post('/register',(req,res)=>{
+    deHelper.find('user',{userName:req.body.userName},results=>{
+        if(results.length == 0){
+               deHelper.insertOne('user',req.body,results=>{
+                   res.send({
+                       msg:"注册成功",
+                       code:200
+                   })
+               })
+        }else{
+            res.send({
+                msg:"已被注册",
+                code:30
+            })
+        }
+    })
+})
+//路由7 验证码模块
+var svgCaptcha = require('svg-captcha');
+app.get('/captcha', function (req, res) {
+	var captcha = svgCaptcha.create();
+	req.session.vcode = captcha.text;
+	res.type('svg');
+	res.status(200).send(captcha.data);
+});
+
+//路由8 登录接口
+app.post('/login',(req,res)=>{
+    const userName = req.body.userName
+    const password = req.body.password
+    const vcode = req.body.vcode
+    if(req.session.vcode.toLowerCase() === vcode.toLowerCase()){
+        deHelper.find('user',{userName},results=>{
+            if(results.length > 0){
+                req.session.userName = userName
+                res.send({
+                    msg:"恭喜您,登录成功,欢赢回来",
+                    code:200,
+                    userName
+                })
+            }else{
+                res.send({
+                    msg:"用户名或密码错误",
+                    code:400
+                })
+            }
+        })
+    }else{
+        res.send({
+            msg:"验证码填写错误",
+            code:401
+        })
+    }
+})
+
+//路由9 登出接口
+app.get('/logout',(req,res)=>{
+    req.session = null
+    res.send({
+        msg:"期待你的下次回归",
+        code:200
     })
 })
 app.listen(8848)
