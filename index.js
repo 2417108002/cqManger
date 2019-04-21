@@ -11,6 +11,7 @@ app.get('/list',(req,res)=>{
     const pageSize = req.query.pageSize
     const query = req.query.query
     deHelper.find('cqlist',{},(results) => {
+        results = results.reverse()
         const backdata = results.filter( v => {
                 if(v.heroName.includes(query) || v.skillName.includes(query)){
                     return true;

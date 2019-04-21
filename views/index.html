@@ -216,15 +216,20 @@
        data();
      })
      //点击搜索发送情求
-   $('.btn-search').on('click',(e)=>{
-     e.preventDefault();
-     data();
-   })
-   //回车发送请求
-   $('input[name=search]').keyup((e)=>{
-     if(e.keyCode == 13){
-       data();
-     }
+  //  $('.btn-search').on('click',(e)=>{
+  //    e.preventDefault();
+  //    data();
+  //  })
+  //  //回车发送请求
+  //  $('input[name=search]').keyup((e)=>{
+  //    if(e.keyCode == 13){
+  //      data();
+  //    }
+  //  })
+   //使用submit事件发送搜索框的请求
+   $('form').submit(function(e){
+    e.preventDefault();
+    data();
    })
    //修改按钮点击事件
    $('tbody').on('click','.btn-edit',function(){
